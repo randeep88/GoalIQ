@@ -10,7 +10,6 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const { data: session, status } = useSession();
-  console.log(session);
 
   if (status === "loading") return null;
 

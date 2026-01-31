@@ -1,17 +1,12 @@
-import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export async function middleware(req: NextRequest) {
-  const session = await auth();
+export function middleware(req: NextRequest) {
+  const token =
+    req.cookies.get("next-auth.session-token") ||
+    req.cookies.get("__Secure-next-auth.session-token");
 
-  const protectedPaths = ["/dashboard", "/goals", "/api/goals"];
-
-  const isProtected = protectedPaths.some((path) =>
-    req.nextUrl.pathname.startsWith(path),
-  );
-
-  if (isProtected && !session) {
+  if (!token) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
@@ -19,5 +14,11 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/goals/:path*", "/api/goals/:path*"],
+  matcher: [
+    "/dashboard/:path*",
+    "/goals/:path*",
+    "/api/goals/:path*",
+    "/api/activity/:path*",
+    "/api/topics/:path*",
+  ],
 };
