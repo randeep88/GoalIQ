@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import Navbar from "@/src/components/Navbar";
 import { useSession } from "next-auth/react";
 import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
 
 export default function DashboardLayout({
   children,
@@ -13,6 +14,12 @@ export default function DashboardLayout({
   const { data: session, status } = useSession();
   const router = useRouter();
 
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/login");
+    }
+  }, [status, router]);
+
   if (status === "loading") {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -21,8 +28,12 @@ export default function DashboardLayout({
     );
   }
 
-  if (!session) {
-    router.push("/login");
+  if (status === "unauthenticated" || !session) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
   }
 
   return (
