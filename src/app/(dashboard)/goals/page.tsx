@@ -158,7 +158,7 @@ const GoalPage = () => {
   }
 
   return (
-    <PageContainer className="mb-20">
+    <PageContainer>
       <div className="flex items-center justify-between">
         <h1 className="font-medium text-2xl">Goals</h1>
 

@@ -13,7 +13,7 @@ import {
 import { Field } from "@/components/ui/field";
 import { Progress } from "@/components/ui/progress";
 import useGoals from "@/src/hooks/useGoals";
-import { ArrowLeft, Loader2, Play, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, BookOpen, Loader2, Play, Plus, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import PageContainer from "./PageContainer";
 import { Separator } from "@/components/ui/separator";
@@ -175,7 +175,7 @@ const SingleGoalPage = ({ goalId }: { goalId: string }) => {
   }
 
   return (
-    <PageContainer className="mb-20">
+    <PageContainer>
       <div className="mb-5 flex items-center justify-between">
         <Button onClick={() => router.back()} variant="secondary">
           <ArrowLeft />
@@ -273,7 +273,7 @@ const SingleGoalPage = ({ goalId }: { goalId: string }) => {
       <Separator className="my-5" />
       <h1 className="text-xl mb-5">Topics</h1>
       {goal?.topics.length > 0 ? (
-        <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4">
+        <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4 mb-20">
           {goal?.topics.map((topic: any, index: number) => (
             <Card key={index}>
               <CardHeader>
@@ -492,8 +492,9 @@ const SingleGoalPage = ({ goalId }: { goalId: string }) => {
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center h-[40vh]">
-          <p className="text-lg">No topics found</p>
-          <p className="text-muted-foreground">
+          <BookOpen className="h-8 w-8 text-muted-foreground bg-muted rounded-lg p-2 mb-2" />
+          <p>No topics found</p>
+          <p className="text-muted-foreground text-sm">
             Add some topics to get started
           </p>
         </div>

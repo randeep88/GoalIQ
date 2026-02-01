@@ -31,9 +31,6 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const { data: session, status } = useSession();
-  console.log("status", status);
-
   const {
     register,
     handleSubmit,
@@ -50,7 +47,6 @@ const LoginPage = () => {
         callbackUrl: "/dashboard",
       });
 
-      console.log(res);
       if (res?.error === "CredentialsSignin") {
         toast.error("Invalid credentials");
       }
