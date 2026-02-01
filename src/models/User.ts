@@ -4,7 +4,7 @@ const UserSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true },
   image: { type: String },
-  password: { type: String, required: false },
+  password: String,
   provider: {
     type: String,
     enum: ["google", "credentials"],
