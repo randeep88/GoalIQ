@@ -75,6 +75,7 @@ const GoalPage = () => {
   const [open, setOpen] = useState(false);
   const [isUpdateOpen, setIsUpdateOpen] = useState(false);
   const [selectedGoalId, setSelectedGoalId] = useState<string | null>(null);
+  const [loadingId, setLoadingId] = useState<string | null>(null);
   const router = useRouter();
 
   const {
@@ -157,7 +158,7 @@ const GoalPage = () => {
   }
 
   return (
-    <PageContainer>
+    <PageContainer className="mb-20">
       <div className="flex items-center justify-between">
         <h1 className="font-medium text-2xl">Goals</h1>
 
@@ -289,11 +290,22 @@ const GoalPage = () => {
                     <Button
                       className="ml-auto"
                       variant="outline"
-                      onClick={() => startGoal(goal?._id)}
-                      disabled={isStartingGoal}
+                      onClick={() => {
+                        setLoadingId(goal?._id);
+                        startGoal(goal?._id, {
+                          onSuccess: () => {
+                            setLoadingId(null);
+                          },
+                        });
+                      }}
+                      disabled={isStartingGoal && loadingId === goal?._id}
                     >
                       <Play />
-                      {isStartingGoal ? <>Starting...</> : "Start"}
+                      {isStartingGoal && loadingId === goal?._id ? (
+                        <>Starting...</>
+                      ) : (
+                        "Start"
+                      )}
                     </Button>
                   )}
                 </CardAction>

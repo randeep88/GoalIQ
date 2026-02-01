@@ -67,11 +67,13 @@ const DashboardPage = () => {
     (g: any) => g.isStarted === true && g.progress < 100,
   );
 
-  const completedGoals = goals?.filter((g: any) => g.progress === 100);
-  const inProgressGoals = goals?.filter(
-    (g: any) => g.progress > 0 && g.progress < 100,
-  );
-  const totalGoals = goals?.length;
+  const completedGoals = goals?.length
+    ? goals?.filter((g: any) => g.progress === 100)
+    : [];
+  const inProgressGoals = goals?.length
+    ? goals?.filter((g: any) => g.progress > 0 && g.progress < 100)
+    : [];
+  const totalGoals = goals?.length ? goals?.length : 0;
 
   const {
     register,

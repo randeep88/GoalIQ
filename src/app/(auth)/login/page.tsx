@@ -38,27 +38,33 @@ const LoginPage = () => {
   } = useForm<Form>();
 
   const onSubmit = async (data: Form) => {
-    setIsLoading(true);
-    const res = await signIn("credentials", {
-      email: data.email,
-      password: data.password,
-      redirect: false,
-    });
+    try {
+      setIsLoading(true);
+      const res = await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+        callbackUrl: "/dashboard",
+      });
 
-    setIsLoading(false);
-    if (res?.error === "CredentialsSignin") {
-      toast.error("Invalid credentials");
-    }
-    if (res?.error === "EmailSignin") {
-      toast.error("Invalid email");
-    }
-    if (res?.error === "PasswordSignin") {
-      toast.error("Invalid password");
-    }
-
-    if (res?.url != null) {
-      toast.success("Logged in successfully");
-      router.push("/dashboard");
+      console.log(res);
+      if (res?.error === "CredentialsSignin") {
+        toast.error("Invalid credentials");
+      }
+      if (res?.error === "EmailSignin") {
+        toast.error("Invalid email");
+      }
+      if (res?.error === "PasswordSignin") {
+        toast.error("Invalid password");
+      }
+      if (!res?.error && res?.ok) {
+        toast.success("Login successful");
+        router.push("/dashboard");
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 

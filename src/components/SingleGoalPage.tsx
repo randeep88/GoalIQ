@@ -177,8 +177,9 @@ const SingleGoalPage = ({ goalId }: { goalId: string }) => {
   return (
     <PageContainer className="mb-20">
       <div className="mb-5 flex items-center justify-between">
-        <Button onClick={() => router.back()} variant="secondary" size="icon">
+        <Button onClick={() => router.back()} variant="secondary">
           <ArrowLeft />
+          Back
         </Button>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>

@@ -25,24 +25,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error("Email and password required");
+          return null;
         }
-
-        await connectDB();
 
         const user = await User.findOne({ email: credentials.email });
-
-        if (!user || !user.password) {
-          throw new Error("Invalid credentials");
+        if (!user) {
+          return null;
         }
 
-        const isPasswordValid = await bcrypt.compare(
+        const isValid = await bcrypt.compare(
           credentials.password as string,
           user.password as string,
         );
 
-        if (!isPasswordValid) {
-          throw new Error("Invalid credentials");
+        if (!isValid) {
+          return null;
         }
 
         return {
@@ -65,6 +62,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (account?.provider === "google") {
         await connectDB();
 
+        const dbUser = await User.findOne({ email: user.email });
+
         await User.updateOne(
           { email: user.email },
           {
@@ -76,6 +75,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           },
           { upsert: true },
         );
+        user.id = dbUser._id.toString();
       }
 
       return true;

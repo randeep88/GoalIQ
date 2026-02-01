@@ -3,7 +3,6 @@ import connectDB from "@/src/lib/db";
 import Goal from "@/src/models/Goal";
 import Note from "@/src/models/Note";
 import Topic from "@/src/models/Topic";
-import { Types } from "mongoose";
 
 // Ensure models are registered to prevent MissingSchemaError during population
 [Goal, Note, Topic];
@@ -23,7 +22,7 @@ export const GET = async () => {
     }
 
     const goals = await Goal.find({
-      user: new Types.ObjectId(session.user.id),
+      user: session.user.id,
     })
       .populate({
         path: "topics",
@@ -33,6 +32,13 @@ export const GET = async () => {
         select: "name description isCompleted note",
       })
       .lean();
+
+    if (goals.length === 0) {
+      return Response.json(
+        { message: "No goals found", data: [] },
+        { status: 200 },
+      );
+    }
 
     const goalsWithProgress = goals.map((goal: any) => {
       const totalTopics = goal.topics.length;

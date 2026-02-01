@@ -7,11 +7,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 const useGoals = (goalId?: string) => {
   const queryClient = useQueryClient();
   // Get Goals
-  const {
-    data: goals,
-    isPending: loadingGoals,
-    error,
-  } = useQuery({
+  // GET goals
+  const { data: goals, isPending: loadingGoals } = useQuery({
     queryKey: ["goals"],
     queryFn: async () => {
       const res = await axios.get("/api/goals/get-goals");
@@ -19,11 +16,7 @@ const useGoals = (goalId?: string) => {
     },
   });
 
-  const {
-    data: goal,
-    isPending: loadingGoal,
-    error: goalError,
-  } = useQuery({
+  const { data: goal, isPending: loadingGoal } = useQuery({
     enabled: !!goalId,
     queryKey: ["goal", goalId],
     queryFn: async () => {
@@ -42,7 +35,9 @@ const useGoals = (goalId?: string) => {
       toast.success("Goal created successfully");
       queryClient.invalidateQueries({ queryKey: ["goals"] });
       queryClient.invalidateQueries({ queryKey: ["activity"] });
-      queryClient.invalidateQueries({ queryKey: ["goal", goalId] });
+      if (goalId) {
+        queryClient.invalidateQueries({ queryKey: ["goal", goalId] });
+      }
     },
     onError: (error: any) => {
       toast.error(error.response.data.message);
@@ -61,7 +56,9 @@ const useGoals = (goalId?: string) => {
       toast.success("Goal deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["goals"] });
       queryClient.invalidateQueries({ queryKey: ["activity"] });
-      queryClient.invalidateQueries({ queryKey: ["goal", goalId] });
+      if (goalId) {
+        queryClient.invalidateQueries({ queryKey: ["goal", goalId] });
+      }
     },
     onError: (error: any) => {
       toast.error(error.response.data.message);
@@ -83,7 +80,9 @@ const useGoals = (goalId?: string) => {
       toast.success("Goal updated successfully");
       queryClient.invalidateQueries({ queryKey: ["goals"] });
       queryClient.invalidateQueries({ queryKey: ["activity"] });
-      queryClient.invalidateQueries({ queryKey: ["goal", goalId] });
+      if (goalId) {
+        queryClient.invalidateQueries({ queryKey: ["goal", goalId] });
+      }
     },
     onError: (error: any) => {
       toast.error(error.response.data.message);
@@ -100,7 +99,9 @@ const useGoals = (goalId?: string) => {
       toast.success("Goal started successfully");
       queryClient.invalidateQueries({ queryKey: ["goals"] });
       queryClient.invalidateQueries({ queryKey: ["activity"] });
-      queryClient.invalidateQueries({ queryKey: ["goal", goalId] });
+      if (goalId) {
+        queryClient.invalidateQueries({ queryKey: ["goal", goalId] });
+      }
     },
     onError: (error: any) => {
       toast.error(error.response.data.message);
