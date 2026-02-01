@@ -39,13 +39,11 @@ const LoginPage = () => {
 
   const onSubmit = async (data: Form) => {
     setIsLoading(true);
-    console.log("login started");
     const res = await signIn("credentials", {
       email: data.email,
       password: data.password,
       redirect: false,
     });
-    console.log("login response", res);
 
     setIsLoading(false);
     if (res?.error === "CredentialsSignin") {
