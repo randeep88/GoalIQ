@@ -11,7 +11,6 @@ export default function ClientProviders({
 }: {
   children: React.ReactNode;
 }) {
-  // Important: QueryClient ko yahan useState se banao taaki har request pe naya instance na bane
   const [queryClient] = useState(() => new QueryClient());
 
   return (

@@ -1,12 +1,16 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
-import connectDB from "./src/lib/db";
-import User from "./src/models/User";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
+import connectDB from "./src/lib/db";
+import User from "./src/models/User";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   trustHost: true,
+
+  session: {
+    strategy: "jwt",
+  },
 
   pages: {
     signIn: "/login",
@@ -21,7 +25,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          return null;
+          throw new Error("Email and password required");
         }
 
         await connectDB();
@@ -29,7 +33,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const user = await User.findOne({ email: credentials.email });
 
         if (!user || !user.password) {
-          return null;
+          throw new Error("Invalid credentials");
         }
 
         const isPasswordValid = await bcrypt.compare(
@@ -38,10 +42,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         );
 
         if (!isPasswordValid) {
-          return null;
+          throw new Error("Invalid credentials");
         }
 
-        return user;
+        return {
+          id: user._id.toString(),
+          email: user.email,
+          name: user.name,
+          image: user.image,
+        };
       },
     }),
 
@@ -72,23 +81,33 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return true;
     },
 
-    async jwt({ token, profile }) {
-      if (profile) {
-        token.picture = profile.picture;
+    async jwt({ token, user, profile }) {
+      if (user) {
+        token.userId = user.id;
+        token.email = user.email;
+        token.name = user.name;
+        token.picture = user.image;
       }
 
+      if (profile?.picture) {
+        token.picture = profile.picture;
+      }
       if (token.email && !token.userId) {
         await connectDB();
         const dbUser = await User.findOne({ email: token.email });
-        if (dbUser) token.userId = dbUser._id.toString();
+        if (dbUser) {
+          token.userId = dbUser._id.toString();
+        }
       }
 
       return token;
     },
 
     async session({ session, token }) {
-      if (session.user) {
+      if (session.user && token) {
         session.user.id = token.userId as string;
+        session.user.email = token.email as string;
+        session.user.name = token.name as string;
         session.user.image = token.picture as string;
       }
       return session;

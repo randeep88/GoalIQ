@@ -27,6 +27,7 @@ import { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { useRouter } from "next/navigation";
 
 type Topic = {
   name: string;
@@ -39,9 +40,25 @@ type Goal = {
   topics: Topic[];
 };
 
-const page = () => {
-  const { data: session } = useSession();
+const DashboardPage = () => {
+  const { data: session, status } = useSession();
   const [open, setOpen] = useState(false);
+  const router = useRouter();
+
+  if (status === "loading") {
+    return (
+      <PageContainer>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+      </PageContainer>
+    );
+  }
+
+  if (status === "unauthenticated") {
+    router.push("/login");
+    return null;
+  }
 
   const { activity } = useActivity();
   const { goals, loadingGoals, createGoal, isCreatingGoal } = useGoals();
@@ -326,4 +343,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default DashboardPage;
